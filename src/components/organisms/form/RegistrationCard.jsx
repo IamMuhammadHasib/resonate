@@ -1,9 +1,9 @@
-import Card from "./Card";
-import TextInput from "./TextInput";
+import CardDiv from "../../atoms/card_div/CardDiv";
+import TextInput from "../../atoms/input/TextInput";
 
 const RegistrationCard = () => {
   return (
-    <Card>
+    <CardDiv>
       <form className="flex flex-col justify-between h-full p-4">
         <div className="flex flex-col gap-4">
           <TextInput type="text" name="fullname" placeholder="Full name" />
@@ -31,7 +31,7 @@ const RegistrationCard = () => {
           </button>
         </div>
       </form>
-    </Card>
+    </CardDiv>
   );
 };
 

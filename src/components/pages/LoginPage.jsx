@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "./LoginPage.css";
-import LoginCard from "../components/LoginCard";
+import LoginCard from "../organisms/form/LoginCard";
 
 class LoginPage extends Component {
   constructor() {

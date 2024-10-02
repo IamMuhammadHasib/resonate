@@ -1,6 +1,6 @@
 import { useState } from "react";
-import Card from "./Card";
-import TextInput from "./TextInput";
+import CardDiv from "../../atoms/card_div/CardDiv";
+import TextInput from "../../atoms/input/TextInput";
 import RegistrationCard from "./RegistrationCard";
 
 const LoginCard = () => {
@@ -10,7 +10,7 @@ const LoginCard = () => {
   };
   return (
     <>
-      <Card>
+      <CardDiv>
         <form className="flex flex-col justify-between h-full p-4">
           <div>
             <div className="flex flex-col gap-4">
@@ -52,7 +52,7 @@ const LoginCard = () => {
             </div>
           </div>
         </form>
-      </Card>
+      </CardDiv>
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-green-50 bg-opacity-80">
