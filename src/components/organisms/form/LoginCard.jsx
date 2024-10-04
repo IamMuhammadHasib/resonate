@@ -1,7 +1,10 @@
 import { useState } from "react";
-import CardDiv from "../../atoms/card_div/CardDiv";
+import CardDiv from "../../atoms/card_div/BasicCardDiv";
 import TextInput from "../../atoms/input/TextInput";
 import RegistrationCard from "./RegistrationCard";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faXmark } from "@fortawesome/free-solid-svg-icons";
+
 
 const LoginCard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -59,10 +62,10 @@ const LoginCard = () => {
           <div className="relative">
             <RegistrationCard />
             <button
-              className="absolute top-0 right-0 mt-2 mr-2 bg-red-500 text-white rounded-full p-2"
+              className="absolute top-0 right-0 mt-4 mr-4 rounded-full p-2"
               onClick={toggleModal}
             >
-              Close
+              <FontAwesomeIcon icon={faXmark} />
             </button>
           </div>
         </div>
