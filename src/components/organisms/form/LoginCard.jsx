@@ -18,13 +18,15 @@ const LoginCard = () => {
     setIsModalOpen(!isModalOpen);
   };
 
-
   // Fetch CSRF token on component mount
   useEffect(() => {
     const fetchCsrfToken = async () => {
       try {
-        const response = await axios.get("/csrf-token"); // Adjust the URL if needed
-        setCsrfToken(response.data.csrfToken); // Save CSRF token to state
+        const response = await fetch("http://localhost:5000/csrf-token", {
+          credentials: "include", // Include credentials (cookies)
+        });
+        const data = await response.json();
+        setCsrfToken(data.csrfToken); // Save CSRF token to state
       } catch (err) {
         console.error("Error fetching CSRF token", err);
       }
@@ -34,32 +36,36 @@ const LoginCard = () => {
   }, []);
 
   console.log("Form Data:", { emailPhone, password });
-  // Handle form submission
+
+  // Handle form submission using fetch
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/login",
-        {
-          emailPhone,
-          password,
+      const response = await fetch("http://localhost:5000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-csrf-token": csrfToken, // Send the CSRF token in the headers
         },
-        {
-          headers: {
-            "x-csrf-token": csrfToken, // Send the CSRF token in the headers
-          },
-        }
-      );
+        body: JSON.stringify({ emailPhone, password }),
+        credentials: "include", // Include credentials (cookies)
+      });
+
+      if (!response.ok) {
+        throw new Error("Login failed");
+      }
+
+      const data = await response.json();
 
       // Handle success: Store JWT token and redirect or perform other actions
-      const token = response.data.token;
+      const token = data.token;
       localStorage.setItem("jwt", token); // Store JWT token in local storage
       alert("Login successful!");
     } catch (err) {
       console.error("Login error", err);
-      setError(err.response?.data?.message || "Login failed");
+      setError(err.message || "Login failed");
     }
   };
 
