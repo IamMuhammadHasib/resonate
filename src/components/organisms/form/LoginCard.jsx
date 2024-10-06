@@ -1,32 +1,92 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CardDiv from "../../atoms/card_div/BasicCardDiv";
 import TextInput from "../../atoms/input/TextInput";
 import RegistrationCard from "./RegistrationCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-
+import axios from "axios"; // Axios to make API calls
 
 const LoginCard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [emailPhone, setEmailPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [csrfToken, setCsrfToken] = useState(""); // To store CSRF token
+  const [error, setError] = useState(null);
+
+  // Toggle the registration modal
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
+
+
+  // Fetch CSRF token on component mount
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      try {
+        const response = await axios.get("/csrf-token"); // Adjust the URL if needed
+        setCsrfToken(response.data.csrfToken); // Save CSRF token to state
+      } catch (err) {
+        console.error("Error fetching CSRF token", err);
+      }
+    };
+
+    fetchCsrfToken();
+  }, []);
+
+  console.log("Form Data:", { emailPhone, password });
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/login",
+        {
+          emailPhone,
+          password,
+        },
+        {
+          headers: {
+            "x-csrf-token": csrfToken, // Send the CSRF token in the headers
+          },
+        }
+      );
+
+      // Handle success: Store JWT token and redirect or perform other actions
+      const token = response.data.token;
+      localStorage.setItem("jwt", token); // Store JWT token in local storage
+      alert("Login successful!");
+    } catch (err) {
+      console.error("Login error", err);
+      setError(err.response?.data?.message || "Login failed");
+    }
+  };
+
   return (
     <>
       <CardDiv>
-        <form className="flex flex-col justify-between h-full p-4">
+        <form
+          className="flex flex-col justify-between h-full p-4"
+          onSubmit={handleSubmit}
+        >
           <div>
             <div className="flex flex-col gap-4">
               <TextInput
                 type="text"
-                name="email-phone"
+                name="emailPhone"
                 placeholder="Email address or phone number"
+                value={emailPhone}
+                onChange={(e) => setEmailPhone(e.target.value)}
               />
               <TextInput
                 type="password"
                 name="password"
-                placeholder="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
+              {error && <p className="text-red-500">{error}</p>}
               <button
                 type="submit"
                 className="bg-green-400 rounded-md p-2 text-2xl font-semibold"
@@ -40,7 +100,7 @@ const LoginCard = () => {
           </div>
 
           <div>
-            <hr className="" />
+            <hr />
           </div>
 
           <div>
